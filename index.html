@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ShiftSense — Shift Life OS</title>
+<meta name="description" content="AI-powered companion for shift workers. Sleep better, manage energy, and take control of your shift life."/>
+<meta name="theme-color" content="#0A0E1A"/>
+<link rel="icon" type="image/png" href="icon.png"/>
+<link rel="apple-touch-icon" href="icon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+:root{
+--bg:#0A0E1A;--bg2:#0C1121;--surface:#131825;--surface2:#1A1F35;
+--indigo:#6366F1;--indigo50:#818CF8;--indigo20:rgba(99,102,241,0.12);
+--cyan:#22D3EE;--cyan50:#67E8F9;--cyan10:rgba(34,211,238,0.08);--cyan20:rgba(34,211,238,0.15);
+--w:#fff;--w90:rgba(255,255,255,0.9);--w70:rgba(255,255,255,0.7);
+--w50:rgba(255,255,255,0.5);--w30:rgba(255,255,255,0.3);--w15:rgba(255,255,255,0.15);
+--w06:rgba(255,255,255,0.04);
+--sans:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',monospace;
+--max:1120px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--w);font-family:var(--sans);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--indigo);color:var(--w)}
+
+/* GRID NOISE BG */
+body::before{content:'';position:fixed;inset:0;background-image:
+radial-gradient(circle at 1px 1px, rgba(255,255,255,0.015) 1px, transparent 0);
+background-size:40px 40px;pointer-events:none;z-index:0}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+/* ═══ NAVBAR ═══ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 0;
+background:rgba(10,14,26,0.8);backdrop-filter:blur(24px) saturate(1.2);
+border-bottom:1px solid var(--w06)}
+.nav .wrap{display:flex;justify-content:space-between;align-items:center}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-0.5px}
+.nav-mark{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;overflow:hidden;flex-shrink:0}
+.nav-mark img{width:100%;height:100%;display:block;border-radius:8px}
+.nav-logo b{color:var(--cyan)}
+.nav-r{display:flex;align-items:center;gap:24px}
+.nav-r a{font-size:13px;font-weight:500;color:var(--w50);transition:color .2s}
+.nav-r a:hover{color:var(--w)}
+.nav-dl{background:var(--w);color:var(--bg)!important;padding:7px 18px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:.3px}
+.nav-dl:hover{opacity:.9}
+
+/* ═══ HERO ═══ */
+.hero{padding:160px 0 100px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:600px;
+background:radial-gradient(ellipse,rgba(99,102,241,0.08) 0%,transparent 70%);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1fr 320px;gap:60px;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 8px;
+border-radius:100px;background:var(--cyan10);border:1px solid var(--cyan20);margin-bottom:24px}
+.hero-tag .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);
+box-shadow:0 0 12px var(--cyan);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-tag span{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:.8px;text-transform:uppercase}
+.hero h1{font-size:clamp(40px,5.5vw,64px);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:20px}
+.hero h1 .accent{color:var(--cyan);position:relative}
+.hero-p{font-size:17px;color:var(--w50);line-height:1.75;max-width:460px;margin-bottom:36px}
+.hero-p strong{color:var(--w70);font-weight:600}
+
+/* Store buttons */
+.stores{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.store{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;
+font-size:13px;font-weight:600;transition:transform .15s}
+.store:hover{transform:translateY(-2px)}
+.store svg{width:18px;height:18px;flex-shrink:0}
+.store-w{background:var(--w);color:#111}
+.store-d{background:var(--surface2);color:var(--w);border:1px solid var(--w15)}
+.store-coming{opacity:.5;pointer-events:none}
+.store-coming:hover{transform:none}
+.store small{font-size:9px;font-weight:400;opacity:.6;display:block;line-height:1}
+
+.hero-proof{display:flex;gap:20px;font-family:var(--mono);font-size:10px;color:var(--w30);letter-spacing:.5px;text-transform:uppercase}
+
+/* Phone */
+.phone-wrap{position:relative}
+.phone-glow-bg{position:absolute;inset:-60px;background:radial-gradient(circle,rgba(34,211,238,0.07),transparent 70%);pointer-events:none}
+.phone{width:260px;height:520px;background:var(--surface);border-radius:40px;
+border:2px solid var(--w15);position:relative;overflow:hidden;
+box-shadow:0 50px 100px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05)}
+.ph-notch{width:80px;height:24px;background:var(--bg);border-radius:0 0 14px 14px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:5}
+.ph-in{position:absolute;inset:3px;border-radius:37px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.ph-bar{display:flex;justify-content:space-between;padding:10px 18px 4px;font-family:var(--mono);font-size:9px;color:var(--w30)}
+.ph-greet{padding:4px 18px;font-size:16px;font-weight:700;letter-spacing:-.3px}
+.ph-greet span{display:block;font-size:11px;font-weight:400;color:var(--w30);margin-top:2px}
+.ph-card{margin:8px 12px;padding:14px;background:var(--surface);border-radius:14px;border:1px solid var(--w06)}
+.ph-lbl{font-family:var(--mono);font-size:8px;color:var(--indigo50);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.ph-ring{width:64px;height:64px;border-radius:50%;border:3px solid var(--indigo);margin:0 auto 6px;display:grid;place-items:center;position:relative}
+.ph-ring::after{content:'';position:absolute;inset:5px;border-radius:50%;border:2px solid var(--cyan);opacity:.25}
+.ph-rv{font-family:var(--mono);font-size:18px;font-weight:700}
+.ph-rs{text-align:center;font-size:9px;color:var(--w30)}
+.ph-card p{font-size:10px;color:var(--w50);line-height:1.55}
+.ph-tabs{position:absolute;bottom:0;left:0;right:0;padding:8px 16px 20px;display:flex;justify-content:space-around;background:var(--surface);border-top:1px solid var(--w06)}
+.ph-tab{font-size:8px;color:var(--w30);text-align:center;letter-spacing:.3px}
+.ph-tab.on{color:var(--indigo50)}
+
+/* ═══ STAT STRIP ═══ */
+.stats{border-top:1px solid var(--w06);border-bottom:1px solid var(--w06);padding:40px 0}
+.stats .wrap{display:flex;justify-content:space-around;text-align:center;flex-wrap:wrap;gap:24px}
+.stat-n{font-family:var(--mono);font-size:36px;font-weight:800;letter-spacing:-1px}
+.stat-n .c{color:var(--cyan)}
+.stat-l{font-size:12px;color:var(--w30);margin-top:4px;letter-spacing:.5px}
+
+/* ═══ FEATURES ═══ */
+.feat-sec{padding:100px 0}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;flex-wrap:wrap;gap:16px}
+.sec-label{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--indigo50);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1.2}
+.sec-sub{font-size:14px;color:var(--w30);max-width:360px;text-align:right}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--w06);border-radius:16px;overflow:hidden}
+.feat{background:var(--bg);padding:32px 28px;transition:background .3s}
+.feat:hover{background:var(--surface)}
+.feat-ico{font-size:24px;margin-bottom:16px;width:48px;height:48px;border-radius:12px;display:grid;place-items:center}
+.feat-ico.a{background:var(--indigo20)}.feat-ico.b{background:var(--cyan10)}
+.feat h3{font-size:15px;font-weight:700;margin-bottom:6px;letter-spacing:-.2px}
+.feat p{font-size:13px;color:var(--w30);line-height:1.6}
+
+/* ═══ WISE ═══ */
+.wise{padding:100px 0}
+.wise .wrap{display:grid;grid-template-columns:380px 1fr;gap:60px;align-items:center}
+.wise-chat{display:flex;flex-direction:column;gap:8px}
+.bub{padding:14px 18px;border-radius:14px;font-size:13px;line-height:1.6;max-width:320px;position:relative}
+.bub-u{background:var(--surface2);color:var(--w70);align-self:flex-end;border-bottom-right-radius:4px}
+.bub-a{background:var(--surface);border:1px solid var(--cyan20);color:var(--w70);
+align-self:flex-start;border-bottom-left-radius:4px;border-left:2px solid var(--cyan)}
+.bub-tag{font-family:var(--mono);font-size:9px;color:var(--cyan);margin-bottom:4px;letter-spacing:.5px}
+.wise-txt .sec-label{margin-bottom:8px}
+.wise-txt h2{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:16px;line-height:1.15}
+.wise-txt h2 span{color:var(--cyan)}
+.wise-txt>p{font-size:15px;color:var(--w50);line-height:1.7;margin-bottom:24px}
+.wise-list{display:flex;flex-direction:column;gap:10px}
+.wl{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--w50)}
+.wl::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+
+/* ═══ PRICING ═══ */
+.pricing{padding:100px 0;background:var(--bg2)}
+.pricing .sec-top{justify-content:center;text-align:center;flex-direction:column;align-items:center}
+.pricing .sec-sub{text-align:center}
+.pr-cards{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.pr{background:var(--surface);border:1px solid var(--w06);border-radius:16px;padding:36px 28px;
+min-width:210px;text-align:center;transition:transform .2s}
+.pr:hover{transform:translateY(-4px)}
+.pr.hi{border-color:var(--cyan20);position:relative}
+.pr.hi::before{content:'BEST VALUE';position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+background:var(--cyan);color:var(--bg);font-family:var(--mono);font-size:9px;font-weight:700;
+padding:3px 12px;border-radius:6px;letter-spacing:1px}
+.pr-name{font-family:var(--mono);font-size:11px;color:var(--w30);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.pr-amt{font-family:var(--mono);font-size:38px;font-weight:800;letter-spacing:-1px;margin-bottom:2px}
+.pr-per{font-size:13px;color:var(--w30);margin-bottom:4px}
+.pr-note{font-family:var(--mono);font-size:10px;color:var(--cyan)}
+.pr-div{width:32px;height:1px;background:var(--w15);margin:18px auto}
+.pr-list{text-align:left;font-size:12px;color:var(--w30);line-height:2.4}
+
+/* ═══ FAQ ═══ */
+.faq{padding:100px 0}
+.faq-list{max-width:600px;margin:0 auto}
+.fq{border-bottom:1px solid var(--w06)}
+.fq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 0;cursor:pointer;
+font-size:15px;font-weight:600;color:var(--w70);transition:color .2s}
+.fq-q:hover{color:var(--w)}
+.fq-ic{width:24px;height:24px;border-radius:50%;background:var(--surface);display:grid;place-items:center;
+font-size:14px;color:var(--w30);transition:transform .3s;flex-shrink:0}
+.fq-a{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:14px;color:var(--w30);line-height:1.7}
+.fq.open .fq-a{max-height:300px;padding-bottom:20px}
+.fq.open .fq-ic{transform:rotate(45deg)}
+
+/* ═══ FOUNDER ═══ */
+.founder{padding:80px 0;background:var(--bg2)}
+.fo-card{display:flex;gap:24px;align-items:flex-start;background:var(--surface);
+border:1px solid var(--w06);border-radius:16px;padding:36px;max-width:600px;margin:0 auto}
+.fo-av{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--indigo),var(--cyan));
+display:grid;place-items:center;font-weight:800;font-size:22px;flex-shrink:0}
+.fo-n{font-size:18px;font-weight:700;margin-bottom:2px}
+.fo-r{font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.5px;margin-bottom:10px}
+.fo-q{font-size:14px;color:var(--w50);line-height:1.7;font-style:italic}
+
+/* ═══ CTA ═══ */
+.cta{padding:100px 0;text-align:center}
+.cta h2{font-size:clamp(32px,4vw,48px);font-weight:900;letter-spacing:-1.5px;margin-bottom:12px}
+.cta h2 span{color:var(--cyan)}
+.cta-p{font-size:16px;color:var(--w30);margin-bottom:36px}
+.cta-stores{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+
+/* ═══ FOOTER ═══ */
+.foot{background:var(--surface);border-top:1px solid var(--w06);padding:48px 0 28px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:32px}
+.foot-brand p{font-size:13px;color:var(--w30);line-height:1.6;margin-top:12px}
+.foot-col h4{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:1.5px;
+color:var(--indigo50);text-transform:uppercase;margin-bottom:14px}
+.foot-col a{display:block;font-size:13px;color:var(--w30);margin-bottom:10px;transition:color .2s}
+.foot-col a:hover{color:var(--w)}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;
+padding-top:20px;border-top:1px solid var(--w06);font-size:11px;color:var(--w15)}
+.foot-bot em{font-style:normal;color:var(--w30)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:860px){
+.hero .wrap{grid-template-columns:1fr;text-align:center;gap:40px}
+.hero-p{margin-left:auto;margin-right:auto}
+.stores,.hero-proof{justify-content:center}
+.phone-wrap{display:flex;justify-content:center}
+.stats .wrap{justify-content:center}
+.feat-grid{grid-template-columns:1fr}
+.wise .wrap{grid-template-columns:1fr;text-align:center}
+.wise-chat{align-items:center}
+.bub-u{align-self:center}.bub-a{align-self:center}
+.pr-cards{flex-direction:column;align-items:center}
+.foot-grid{grid-template-columns:1fr 1fr}
+.fo-card{flex-direction:column;align-items:center;text-align:center}
+.sec-top{flex-direction:column;align-items:flex-start;text-align:left}
+.sec-sub{text-align:left}
+.nav-r .hide-m{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav"><div class="wrap">
+<a href="index.html" class="nav-logo"><div class="nav-mark"><img src="icon.png" alt="App icon" width="30" height="30"/></div>Shift<b>Sense</b></a>
+<div class="nav-r">
+<a href="#features" class="hide-m">Features</a>
+<a href="#wise" class="hide-m">Wise AI</a>
+<a href="#pricing" class="hide-m">Pricing</a>
+<a href="#" class="nav-dl">Download</a>
+</div>
+</div></nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-glow"></div>
+<div class="wrap">
+<div>
+<div class="hero-tag"><span class="dot"></span><span>Shift Life OS</span></div>
+<h1>Sleep better.<br>Work <span class="accent">smarter</span>.</h1>
+<p class="hero-p">The first <strong>AI-powered companion</strong> built for shift workers. Wise plans your sleep, tracks your energy, and guides you through every transition.</p>
+<div class="stores">
+<a href="#" class="store store-w"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.99 2.97 12.5 4.7 9.48C5.55 7.98 7.13 7.01 8.82 6.99C10.1 6.97 11.32 7.87 12.11 7.87C12.89 7.87 14.37 6.78 15.92 6.95C16.57 6.98 18.39 7.21 19.56 8.91C19.47 8.97 17.09 10.35 17.12 13.18C17.15 16.58 20.04 17.62 20.07 17.63C20.04 17.69 19.61 19.19 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg><div><small>Download on the</small>App Store</div></a>
+<a href="#" class="store store-d store-coming" aria-disabled="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/></svg><div><small>Coming Soon on</small>Google Play</div></a>
+</div>
+<div class="hero-proof"><span>&#9733;&#9733;&#9733;&#9733;&#9733; New Release</span><span>&#x2022; Free to try</span></div>
+</div>
+<div class="phone-wrap">
+<div class="phone-glow-bg"></div>
+<div class="phone">
+<div class="ph-notch"></div>
+<div class="ph-in">
+<div class="ph-bar"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+<div class="ph-greet">Good evening, Beck<span>Night shift starts in 3h</span></div>
+<div class="ph-card"><div class="ph-lbl">Energy Score</div><div class="ph-ring"><span class="ph-rv">72</span></div><div class="ph-rs">Moderate &mdash; nap recommended</div></div>
+<div class="ph-card"><div class="ph-lbl">Wise says</div><p>"Take a 20-min power nap now. Your energy will peak at 22:00 for your shift."</p></div>
+<div class="ph-tabs"><div class="ph-tab">Calendar</div><div class="ph-tab on">Today</div><div class="ph-tab">Wise</div><div class="ph-tab">Profile</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STATS -->
+<section class="stats"><div class="wrap">
+<div><div class="stat-n">700<span class="c">M</span></div><div class="stat-l">Shift workers worldwide</div></div>
+<div><div class="stat-n">62<span class="c">%</span></div><div class="stat-l">Report sleep problems</div></div>
+<div><div class="stat-n">4<span class="c">+</span></div><div class="stat-l">Languages supported</div></div>
+<div><div class="stat-n">1<span class="c">st</span></div><div class="stat-l">AI shift companion</div></div>
+</div></section>
+
+<!-- FEATURES -->
+<section class="feat-sec" id="features"><div class="wrap">
+<div class="sec-top">
+<div><div class="sec-label">Features</div><div class="sec-title">Everything you need,<br>nothing you don't.</div></div>
+<div class="sec-sub">Carefully crafted tools built from real shift work experience &mdash; not guesswork.</div>
+</div>
+<div class="feat-grid">
+<div class="feat"><div class="feat-ico b">&#x1f9e0;</div><h3>Wise AI Assistant</h3><p>Your personal shift companion. Ask about sleep, energy, or schedule. Wise knows your patterns and takes action.</p></div>
+<div class="feat"><div class="feat-ico a">&#x1f4ca;</div><h3>Sleep Optimization</h3><p>Personalized sleep plans based on your shift type. Know exactly when to sleep for maximum recovery.</p></div>
+<div class="feat"><div class="feat-ico b">&#x26a1;</div><h3>Energy Forecast</h3><p>24-hour energy prediction. See your peaks and dips before they happen. Plan your day around your biology.</p></div>
+<div class="feat"><div class="feat-ico a">&#x1f504;</div><h3>Transition Detection</h3><p>Automatically detects night-to-day shift changes and creates a step-by-step adaptation plan.</p></div>
+<div class="feat"><div class="feat-ico b">&#x23f0;</div><h3>Smart Alarm</h3><p>Gradual wake-up, sleep calculator, power nap timer, and math challenge to defeat snooze habit.</p></div>
+<div class="feat"><div class="feat-ico a">&#x1f4b0;</div><h3>Earnings Report</h3><p>Track night bonuses, overtime, and weekend pay. Export professional PDF reports instantly.</p></div>
+</div>
+</div></section>
+
+<!-- WISE -->
+<section class="wise" id="wise"><div class="wrap">
+<div class="wise-chat">
+<div class="bub bub-u">I'm switching from night to day shift tomorrow. How should I prepare?</div>
+<div class="bub bub-a"><div class="bub-tag">&#x1fab7; Wise</div>Based on your pattern, sleep until 10:00 today, avoid caffeine after 14:00, and nap at 15:00. I've adjusted your alarms accordingly.</div>
+<div class="bub bub-u">Set an alarm for my nap</div>
+<div class="bub bub-a"><div class="bub-tag">&#x1fab7; Wise</div>Done! Power nap alarm set for 15:20 with gradual wake-up. Rest well.</div>
+</div>
+<div class="wise-txt">
+<div class="sec-label">Meet Wise</div>
+<h2>More than a chatbot.<br>Your shift <span>companion</span>.</h2>
+<p>Wise doesn't just answer questions &mdash; it takes action. Set alarms, adjust sleep plans, analyze your patterns, and guide you through every shift transition.</p>
+<div class="wise-list">
+<div class="wl">Understands your unique shift pattern</div>
+<div class="wl">Creates personalized sleep &amp; energy plans</div>
+<div class="wl">Sets alarms and takes actions for you</div>
+<div class="wl">Learns and improves with every conversation</div>
+</div>
+</div>
+</div></section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing"><div class="wrap">
+<div class="sec-top">
+<div class="sec-label">Pricing</div>
+<div class="sec-title">Start free. Upgrade when ready.</div>
+<div class="sec-sub" style="text-align:center;max-width:400px">Try everything with a 7-day free trial. No commitment.</div>
+</div>
+<div class="pr-cards">
+<div class="pr">
+<div class="pr-name">Monthly</div>
+<div class="pr-amt">$5.99</div>
+<div class="pr-per">per month</div>
+<div class="pr-div"></div>
+<div class="pr-list">&#10003; Unlimited Wise AI<br>&#10003; Sleep &amp; Energy Analysis<br>&#10003; PDF Reports<br>&#10003; Smart Alarms</div>
+</div>
+<div class="pr hi">
+<div class="pr-name">Yearly</div>
+<div class="pr-amt">$29.99</div>
+<div class="pr-per">per year</div>
+<div class="pr-note">7-day free trial &middot; Save 44%</div>
+<div class="pr-div"></div>
+<div class="pr-list">&#10003; Everything in Monthly<br>&#10003; $2.49/mo effective<br>&#10003; Priority AI access<br>&#10003; Cancel anytime</div>
+</div>
+<div class="pr">
+<div class="pr-name">Lifetime</div>
+<div class="pr-amt">$79.99</div>
+<div class="pr-per">one-time</div>
+<div class="pr-div"></div>
+<div class="pr-list">&#10003; Everything forever<br>&#10003; All future updates<br>&#10003; No recurring fees<br>&#10003; Best long-term value</div>
+</div>
+</div>
+</div></section>
+
+<!-- FAQ -->
+<section class="faq" id="faq"><div class="wrap">
+<div class="sec-top" style="justify-content:center;text-align:center;flex-direction:column;align-items:center">
+<div class="sec-label">FAQ</div>
+<div class="sec-title">Common Questions</div>
+</div>
+<div class="faq-list">
+<div class="fq" onclick="this.classList.toggle('open')"><div class="fq-q">What is ShiftSense?<span class="fq-ic">+</span></div><div class="fq-a">ShiftSense is an AI-powered companion app for shift workers. It helps you manage your schedule, optimize sleep, track energy, and get personalized recommendations from Wise, your AI assistant.</div></div>
+<div class="fq" onclick="this.classList.toggle('open')"><div class="fq-q">What can Wise AI do?<span class="fq-ic">+</span></div><div class="fq-a">Wise is more than a chatbot &mdash; it's an AI agent. Ask about sleep, energy, or your schedule. Wise can also set alarms, create shift plans, and adjust your routine automatically.</div></div>
+<div class="fq" onclick="this.classList.toggle('open')"><div class="fq-q">Is ShiftSense free to use?<span class="fq-ic">+</span></div><div class="fq-a">Yes! Basic features including calendar, energy scores, and 3 AI messages are free. PRO unlocks unlimited Wise AI, detailed analytics, and all premium features with a 7-day free trial.</div></div>
+<div class="fq" onclick="this.classList.toggle('open')"><div class="fq-q">Is my health data safe?<span class="fq-ic">+</span></div><div class="fq-a">Absolutely. All data is encrypted in transit and at rest. We never sell personal data. Energy scores are calculated on your device. Read our Privacy Policy for full details.</div></div>
+<div class="fq" onclick="this.classList.toggle('open')"><div class="fq-q">Is ShiftSense a medical device?<span class="fq-ic">+</span></div><div class="fq-a">No. ShiftSense provides wellness information based on shift work research. It's not a medical device and doesn't provide medical advice. Always consult your doctor for health decisions.</div></div>
+</div>
+</div></section>
+
+<!-- FOUNDER -->
+<section class="founder"><div class="wrap">
+<div style="text-align:center;margin-bottom:32px"><div class="sec-label">Built by a shift worker</div></div>
+<div class="fo-card">
+<div class="fo-av">B</div>
+<div>
+<div class="fo-n">Beck</div>
+<div class="fo-r">Founder &middot; Studio Lunora</div>
+<div class="fo-q">"I work night shifts at a hospital. I built ShiftSense because I needed it myself. Every feature comes from real shift work experience &mdash; not guesswork."</div>
+</div>
+</div>
+</div></section>
+
+<!-- CTA -->
+<section class="cta"><div class="wrap">
+<h2>Take control of<br>your <span>shift life</span>.</h2>
+<p class="cta-p">Join shift workers sleeping better and working smarter.</p>
+<div class="cta-stores">
+<a href="#" class="store store-w"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 21.99 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 21.99C7.79 22.03 6.8 20.68 5.96 19.47C4.25 16.99 2.97 12.5 4.7 9.48C5.55 7.98 7.13 7.01 8.82 6.99C10.1 6.97 11.32 7.87 12.11 7.87C12.89 7.87 14.37 6.78 15.92 6.95C16.57 6.98 18.39 7.21 19.56 8.91C19.47 8.97 17.09 10.35 17.12 13.18C17.15 16.58 20.04 17.62 20.07 17.63C20.04 17.69 19.61 19.19 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg><div><small>Download on the</small>App Store</div></a>
+<a href="#" class="store store-d store-coming" aria-disabled="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/></svg><div><small>Coming Soon on</small>Google Play</div></a>
+</div>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="foot"><div class="wrap">
+<div class="foot-grid">
+<div class="foot-brand">
+<div class="nav-logo" style="font-size:18px"><div class="nav-mark" style="width:26px;height:26px"><img src="icon.png" alt="App icon" width="26" height="26"/></div>Shift<b>Sense</b></div>
+<p>AI-powered companion for shift workers.<br>Built with care by Studio Lunora.</p>
+</div>
+<div class="foot-col"><h4>App</h4><a href="#features">Features</a><a href="#wise">Wise AI</a><a href="#pricing">Pricing</a><a href="#">Download</a></div>
+<div class="foot-col"><h4>Legal</h4><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="mailto:support@studiolunora.com">Support</a></div>
+<div class="foot-col"><h4>Connect</h4><a href="#">Instagram</a><a href="#">Twitter</a><a href="#">Reddit</a></div>
+</div>
+<div class="foot-bot"><span>&copy; 2026 Studio Lunora. All rights reserved.</span><em>Your shift companion, designed with care.</em></div>
+</div></footer>
+
+</body>
+</html>
